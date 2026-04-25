@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#1A0B2E"
+    android:padding="24dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Preferences"
+        android:textColor="#E6D5FF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"/>
+    <Switch
+        android:id="@+id/switchSpeedMonitor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Run Speed Monitor"
+        android:textColor="#E6D5FF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:thumbTint="#B366FF"
+        android:trackTint="#2D1B4E"
+        android:paddingVertical="8dp"/>
+    <RadioGroup
+        android:id="@+id/rgMonitorMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="8dp"
+        android:visibility="gone">
+        <RadioButton
+            android:id="@+id/rbLegacy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Legacy (Notification)"
+            android:textColor="#A898BC"
+            android:buttonTint="#B366FF"
+            android:textSize="14sp"
+            android:paddingVertical="8dp"/>
+        <RadioButton
+            android:id="@+id/rbOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="System Overlay"
+            android:textColor="#A898BC"
+            android:buttonTint="#B366FF"
+            android:textSize="14sp"
+            android:paddingVertical="8dp"/>
+    </RadioGroup>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="32dp"
+        android:background="#2D1B4E"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="© 2026 Asif Middya"
+        android:textColor="#5C4B75"
+        android:textSize="12sp"
+        android:textStyle="italic"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="InternetMeter v1.2 | midxv codes"
+        android:textColor="#5C4B75"
+        android:textSize="10sp"/>
+</LinearLayout>
