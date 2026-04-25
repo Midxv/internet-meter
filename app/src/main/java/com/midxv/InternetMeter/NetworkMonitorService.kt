@@ -15,6 +15,7 @@ import android.os.IBinder
 import android.os.Looper
 import android.provider.Settings
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.app.NotificationCompat
@@ -34,7 +35,7 @@ class NetworkMonitorService : Service() {
     private val updateRunnable = object : Runnable {
         override fun run() {
             updateSpeed()
-            handler.postDelayed(this, 1000)
+            handler.postDelayed(this, 700)
         }
     }
 
@@ -90,7 +91,7 @@ class NetworkMonitorService : Service() {
             val cutout = windowMetrics.windowInsets.displayCutout
             if (cutout != null && cutout.boundingRects.isNotEmpty()) {
                 val notchRect = cutout.boundingRects[0]
-                layoutParams.x = notchRect.left - 120
+                layoutParams.x = notchRect.left - 130
                 layoutParams.y = notchRect.top + 5
             } else {
                 layoutParams.x = 20
@@ -129,16 +130,24 @@ class NetworkMonitorService : Service() {
         if (timeDiff > 0) {
             val totalDiff = (currentRxBytes - lastRxBytes) + (currentTxBytes - lastTxBytes)
             val bytesPerSecond = (totalDiff * 1000) / timeDiff
-            val speedText = formatSpeed(bytesPerSecond)
             val mode = getSharedPreferences("InternetMeterPrefs", Context.MODE_PRIVATE).getString("monitor_mode", "overlay")
 
             if (mode == "overlay") {
                 if (!isOverlayAdded && Settings.canDrawOverlays(this)) setupFloatingWindow()
-                if (isOverlayAdded) floatingTextView.text = speedText
+
+                if (isOverlayAdded && ::floatingTextView.isInitialized) {
+                    if (bytesPerSecond < 10240) {
+                        floatingTextView.visibility = View.GONE
+                    } else {
+                        floatingTextView.visibility = View.VISIBLE
+                        floatingTextView.text = formatSpeed(bytesPerSecond)
+                    }
+                }
             } else {
                 removeFloatingWindow()
                 val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.notify(notificationId, buildNotification(speedText))
+                val notifText = if (bytesPerSecond < 10240) "Idle" else formatSpeed(bytesPerSecond)
+                notificationManager.notify(notificationId, buildNotification(notifText))
             }
         }
 
@@ -148,10 +157,10 @@ class NetworkMonitorService : Service() {
     }
 
     private fun formatSpeed(bytes: Long): String {
-        if (bytes < 1024) return "$bytes B/s"
         val kb = bytes / 1024f
-        if (kb < 1024) return String.format("%.1f K/s", kb)
-        return String.format("%.1f M/s", kb / 1024f)
+        if (kb < 1024) return String.format("%.1f KB/s", kb)
+        val mb = kb / 1024f
+        return String.format("%.2f MB/s", mb)
     }
 
     private fun buildNotification(text: String): Notification {
@@ -167,6 +176,7 @@ class NetworkMonitorService : Service() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId, "Network Monitor", NotificationManager.IMPORTANCE_LOW)
+            channel.setShowBadge(false)
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
         }
